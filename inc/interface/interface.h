@@ -1,0 +1,8 @@
+//
+// Created by 丁麓然 on 9/22/23.
+//
+
+#ifndef STRING_OPERATION_INTERFACE_H
+#define STRING_OPERATION_INTERFACE_H
+
+#endif //STRING_OPERATION_INTERFACE_H
