@@ -21,19 +21,19 @@ private:
 
 public:
   string();
-  string(const char *str);
-  string(const wchar_t *str);
-  string(const string &str);
-  string(const std::string &str);
+  string(const char *);
+  string(const wchar_t *);
+  string(const string &);
+  string(const std::string &);
   ~string();
-  string &operator=(const string &str);
-  string &operator+=(const string &str);
-  string operator+(const string &str);
-  wchar_t &operator[](int index);
-  wchar_t operator[](int index) const;
-  bool operator==(const string &str) const;
-  std::wostream &operator<<(std::wostream &os) const;
-  std::wistream &operator>>(std::wistream &is);
+  string &operator=(const string &);
+  string &operator+=(const string &);
+  string operator+(const string &);
+  wchar_t &operator[](int);
+  wchar_t operator[](int) const;
+  bool operator==(const string &) const;
+  std::wostream &operator<<(std::wostream &) const;
+  std::wistream &operator>>(std::wistream &);
   operator std::string() const;
   operator const wchar_t *() const;
 
@@ -43,10 +43,10 @@ public:
   bool empty() const;
   void clear();
   string reverse() const;
-  list<string> split(const wchar_t *delimiters) const;
+  list<string> split(const wchar_t *delimiters = nullptr) const;
 };
 
-double string_similarity(const string &str1, const string &str2);
+double string_similarity(const string &, const string &);
 
 } // namespace custom
 

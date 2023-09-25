@@ -2,8 +2,8 @@
 // Created by 丁麓然 on 9/22/23.
 //
 
-#include "/Users/dingluran/Projects/string_operations/inc/datastructure/customstring.h"
-#include "/Users/dingluran/Projects/string_operations/inc/datastructure/customlist.h"
+#include "../../inc/datastructure/customstring.h"
+#include "../../inc/datastructure/customlist.h"
 #include <cwchar>
 #include <istream>
 #include <ostream>
@@ -101,7 +101,7 @@ std::wostream &string::operator<<(std::wostream &os) const {
   return os;
 }
 std::wistream &string::operator>>(std::wistream &is) {
-  // is >> _data;
+  is >> _data;
   return is;
 }
 string::operator std::string() const {
@@ -130,7 +130,7 @@ string string::reverse() const {
   }
   return temp;
 }
-list<string> string::split(const wchar_t *delimiters = nullptr) const {
+list<string> string::split(const wchar_t *delimiters) const {
   if (_length == 0) {
     return list<string>();
   }
@@ -146,6 +146,39 @@ list<string> string::split(const wchar_t *delimiters = nullptr) const {
     token = std::wcstok(nullptr, delimiters, nullptr);
   }
   return temp;
+}
+
+double string_similarity(const string &str1, const string &str2) {
+  if (str1.empty() || str2.empty()) {
+    return 0;
+  }
+  int len1 = str1.length();
+  int len2 = str2.length();
+  int **dp = new int *[len1 + 1];
+  for (int i = 0; i <= len1; ++i) {
+    dp[i] = new int[len2 + 1];
+  }
+  for (int i = 0; i <= len1; ++i) {
+    dp[i][0] = 0;
+  }
+  for (int i = 0; i <= len2; ++i) {
+    dp[0][i] = 0;
+  }
+  for (int i = 1; i <= len1; ++i) {
+    for (int j = 1; j <= len2; ++j) {
+      if (str1[i - 1] == str2[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1] + 1;
+      } else {
+        dp[i][j] = dp[i - 1][j] > dp[i][j - 1] ? dp[i - 1][j] : dp[i][j - 1];
+      }
+    }
+  }
+  double similarity = dp[len1][len2] * 1.0 / (len1 > len2 ? len1 : len2);
+  for (int i = 0; i <= len1; ++i) {
+    delete[] dp[i];
+  }
+  delete[] dp;
+  return similarity;
 }
 
 } // namespace custom

@@ -1,4 +1,5 @@
 build/
+3rdpart/
 .cache/
 .idea/
 .vscode/
