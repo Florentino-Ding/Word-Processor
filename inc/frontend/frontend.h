@@ -9,6 +9,7 @@ namespace interface {
 void Welcome();
 void Help();
 void ShowPage();
-} // namespace interface
+char GetUserInput();
+} // namespace frontend
 
 #endif // STRING_OPERATION_INTERFACE_H
