@@ -2,16 +2,14 @@
 // Created by 丁麓然 on 9/22/23.
 //
 
-#ifndef STRING_OPERATION_STRINGOPERATION_H
-#define STRING_OPERATION_STRINGOPERATION_H
-
-#include "../datastructure/customlist.h"
-#include "../datastructure/customstring.h"
+#ifndef STRING_OPERATION_BACKEND_H
+#define STRING_OPERATION_BACKEND_H
 
 namespace custom {
-void OpenFile(list<string> &, const string &);
-void CreateFile(const string &);
-void OverwriteFile(const list<string> &, const string &);
+void OpenFile(const char *const);
+void OpenFile(const wchar_t *const);
+void CreateFile(const wchar_t *const);
+void SaveFile(const wchar_t *const);
 } // namespace custom
 
-#endif // STRING_OPERATION_STRINGOPERATION_H
+#endif // STRING_OPERATION_BACKEND_H

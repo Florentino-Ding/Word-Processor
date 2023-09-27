@@ -9,7 +9,7 @@
 #include "datastructure/customstring.h"
 
 #define MODE char
-#define COMMAND_MODE 0
+#define PLAIN_MODE 0
 #define NUMBER_MODE 1
 
 typedef custom::list<custom::string> Page;

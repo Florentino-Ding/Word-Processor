@@ -5,12 +5,13 @@
 #include "../../inc/datastructure/customstring.h"
 #include "../../inc/datastructure/customlist.h"
 #include <cwchar>
+#include <iostream>
 #include <istream>
 #include <ostream>
 
 namespace custom {
 string::string() : _data(nullptr), _length(0), _capacity(DEFAULT_CAPACITY) {}
-string::string(const char *str) {
+string::string(const char *const str) {
   if (str == nullptr) {
     _data = nullptr;
     _length = 0;
@@ -23,16 +24,16 @@ string::string(const char *str) {
     _capacity = _length;
   }
 }
-string::string(const wchar_t *str) {
+string::string(const wchar_t *const str) {
   if (str == nullptr) {
     _data = nullptr;
     _length = 0;
     _capacity = DEFAULT_CAPACITY;
   } else {
     _length = wcslen(str);
-    _data = new wchar_t[_length];
+    _capacity = _length + 1;
+    _data = new wchar_t[_capacity];
     wcscpy(_data, str);
-    _capacity = _length;
   }
 }
 string::string(const string &str) {
@@ -42,11 +43,30 @@ string::string(const string &str) {
   wcscpy(_data, str._data);
 }
 string::string(const std::string &str) {
-  size_t _length = str.length() + 1;
-  _data = new wchar_t[_length];
-  mbstowcs(_data, str.c_str(), _length);
-  _length = _length - 1;
+  size_t length = str.length();
+  _length = length;
   _capacity = _length;
+  try {
+    _data = new wchar_t[_length + 1];
+  } catch (std::bad_alloc &e) {
+    std::cerr << "bad_alloc caught: " << e.what() << '\n';
+    _data = nullptr;
+    _length = 0;
+    _capacity = 0;
+    return;
+  }
+  if (_data) {
+    mbstowcs(_data, str.c_str(), _length);
+    _data[_length] = L'\0';
+  } else {
+    throw std::bad_alloc();
+  }
+}
+string::string(const wchar_t *const str, int len) {
+  _length = len;
+  _capacity = len + 1;
+  _data = new wchar_t[_capacity];
+  wcsncpy(_data, str, len);
 }
 string::~string() { delete[] _data; }
 string &string::operator=(const string &str) {
@@ -96,12 +116,12 @@ bool string::operator==(const string &str) const {
   }
   return true;
 }
-std::wostream &string::operator<<(std::wostream &os) const {
-  os << _data;
+std::wostream &operator<<(std::wostream &os, const string &a) {
+  os << a._data;
   return os;
 }
-std::wistream &string::operator>>(std::wistream &is) {
-  is >> _data;
+std::wistream &operator>>(std::wistream &is, const string &a) {
+  is >> a._data;
   return is;
 }
 string::operator std::string() const {
@@ -121,6 +141,45 @@ void string::clear() {
   _length = 0;
   _capacity = DEFAULT_CAPACITY;
 }
+int string::find(const wchar_t *const str) const {
+  if (str == nullptr) {
+    return -1;
+  }
+  return find_first_of(str, 0);
+}
+int string::find_first_of(const wchar_t *const str, int start) const {
+  if (str == nullptr) {
+    return -1;
+  }
+  if (start < 0 || start >= _length) {
+    throw std::out_of_range("start index out of range");
+  }
+  for (int i = start; i < _length; ++i) {
+    for (int j = 0; str[j] != '\0'; ++j) {
+      if (_data[i] == str[j]) {
+        return i;
+      }
+    }
+  }
+  return -1;
+}
+string string::substr(int start) const {
+  if (start < 0 || start >= _length) {
+    return string();
+  }
+  return string(_data + start, _length - start);
+}
+string string::substr(int start, int length) const {
+  if (start < 0 or start >= _length) {
+    throw std::out_of_range("start index out of range");
+  }
+  if (length <= 0) {
+    throw std::out_of_range("length out of range");
+  } else if (length > _length - start) {
+    length = _length - start;
+  }
+  return string(_data + start, length);
+}
 string string::reverse() const {
   string temp(*this);
   for (int i = 0; i < _length / 2; ++i) {
@@ -130,22 +189,22 @@ string string::reverse() const {
   }
   return temp;
 }
-list<string> string::split(const wchar_t *delimiters) const {
+list<string> string::split(const wchar_t delimiter) const {
+  list<string> result;
   if (_length == 0) {
-    return list<string>();
+    return result;
   }
-  if (delimiters == nullptr) {
-    delimiters = L" ";
+  int start = 0;
+  int end = 0;
+  while (end < _length) {
+    while (end < _length and _data[end] != delimiter) {
+      ++end;
+    }
+    result.push_back(substr(start, end - start));
+    start = end + 1;
+    end = start;
   }
-  list<string> temp;
-  wchar_t temp_data[_length + 1];
-  wcscpy(temp_data, _data);
-  wchar_t *token = std::wcstok(_data, delimiters, nullptr);
-  while (token != nullptr) {
-    temp.push_back(token);
-    token = std::wcstok(nullptr, delimiters, nullptr);
-  }
-  return temp;
+  return result;
 }
 
 double string_similarity(const string &str1, const string &str2) {

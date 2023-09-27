@@ -21,10 +21,11 @@ private:
 
 public:
   string();
-  string(const char *);
-  string(const wchar_t *);
+  string(const char *const);
+  string(const wchar_t *const);
   string(const string &);
   string(const std::string &);
+  string(const wchar_t *const, int);
   ~string();
   string &operator=(const string &);
   string &operator+=(const string &);
@@ -32,8 +33,8 @@ public:
   wchar_t &operator[](int);
   wchar_t operator[](int) const;
   bool operator==(const string &) const;
-  std::wostream &operator<<(std::wostream &) const;
-  std::wistream &operator>>(std::wistream &);
+  friend std::wostream &operator<<(std::wostream &, const string &);
+  friend std::wistream &operator>>(std::wistream &, const string &);
   operator std::string() const;
   operator const wchar_t *() const;
 
@@ -42,8 +43,12 @@ public:
   int capacity() const;
   bool empty() const;
   void clear();
+  int find(const wchar_t *const) const;
+  int find_first_of(const wchar_t *const, int = 0) const;
+  string substr(int) const;
+  string substr(int, int) const;
   string reverse() const;
-  list<string> split(const wchar_t *delimiters = nullptr) const;
+  list<string> split(const wchar_t delimiters = L' ') const;
 };
 
 double string_similarity(const string &, const string &);

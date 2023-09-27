@@ -3,11 +3,13 @@
 //
 
 #include "../../inc/frontend/frontend.h"
+#include "../../inc/backend/backend.h"
 #include "../../inc/basic.h"
 #include "../../inc/datastructure/customlist.h"
-#include "../../inc/datastructure/customstring.h"
+#include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <string>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
@@ -28,18 +30,21 @@ void Welcome() {
     std::cout << std::endl;
   }
 
-  std::cout << std::setw((terminalWidth - 36) / 2) << ""
+  std::cout << std::setw((terminalWidth - 44) / 2) << ""
             << "Welcome to use Florentino's word processor!" << std::endl;
-  std::cout << std::setw((terminalWidth - 30) / 2) << ""
+  std::cout << std::setw((terminalWidth - 32) / 2) << ""
             << "Press \"h\" to get help." << std::endl;
-  std::cout << std::setw((terminalWidth - 30) / 2) << ""
+  std::cout << std::setw((terminalWidth - 32) / 2) << ""
             << "Press \"c\" to create a new file." << std::endl;
-  std::cout << std::setw((terminalWidth - 30) / 2) << ""
+  std::cout << std::setw((terminalWidth - 32) / 2) << ""
+            << "Press \"o\" to open a exist file." << std::endl;
+  std::cout << std::setw((terminalWidth - 32) / 2) << ""
             << "Press \"q\" to quit." << std::endl;
 
-  for (int i = 0; i < (terminalHeight - 2) / 2; i++) {
+  for (int i = 0; i < (terminalHeight - 2) / 2 - 2; i++) {
     std::cout << std::endl;
   }
+  SwitchInterface(GetUserInput());
 }
 
 void Help() {
@@ -48,8 +53,7 @@ void Help() {
   int terminalWidth = size.ws_col;
   int terminalHeight = size.ws_row;
 
-  std::cout << "\033[2J\033[H"; // Clear terminal content
-
+  system("clear");
   for (int i = 0; i < (terminalHeight - 5) / 2; i++) {
     std::cout << std::endl;
   }
@@ -68,27 +72,47 @@ void Help() {
   for (int i = 0; i < (terminalHeight - 5) / 2; i++) {
     std::cout << std::endl;
   }
+  SwitchInterface(GetUserInput());
 }
 
 void ShowPage(const custom::list<int> &to_highlight) {
-  std::wcout << page << std::endl;
+  using std::wcout;
+
+  system("clear");
+  if (not to_highlight.empty()) {
+    page.highlight_show(to_highlight, mode);
+  } else {
+    page.show(mode);
+  }
+  SwitchInterface(GetUserInput());
+}
+
+void SearchWord(const wchar_t *const input) {
+  custom::list<int> to_highlight;
+  if (mode == PLAIN_MODE) {
+    to_highlight = page.find(input);
+    if (to_highlight.empty()) {
+      std::wcout << L"Can't find \"" << input << L"\"." << std::endl;
+      SwitchInterface(GetUserInput());
+    } else {
+      std::wcout << "The word \"" << input << "\" appears "
+                 << to_highlight.size() << " times." << std::endl;
+      ShowPage(to_highlight);
+    }
+  } else {
+    int idx = std::stoi(input);
+    custom::string word = page[idx];
+    to_highlight = page.find(word);
+    std::wcout << "The word \"" << word << "\" appears " << to_highlight.size()
+               << " times." << std::endl;
+    ShowPage(to_highlight);
+  }
 }
 
 char GetUserInput() {
-  struct winsize size;
-  ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-  int terminalWidth = size.ws_col;
-  int terminalHeight = size.ws_row;
-
   char userInput;
 
   while (true) {
-    std::cout << "\033[2J\033[H"; // Clear terminal content
-
-    for (int i = 0; i < (terminalHeight - 3) / 2; i++) {
-      std::cout << std::endl;
-    }
-
     std::cin >> userInput;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
@@ -99,11 +123,83 @@ char GetUserInput() {
       break;
     }
   }
-
   return userInput;
 }
+void SwitchInterface(const char userInput) {
+  using custom::CreateFile, custom::OpenFile, custom::SaveFile;
+  using std::wcout, std::endl, std::wcin;
 
-void ShowPage(const custom::list<custom::string> &page) {
-  std::wcout << page << std::endl;
+  wchar_t temp[100];
+  wchar_t temp2[100];
+  switch (userInput) {
+  case 'h':
+  case 'H':
+  case '?':
+    Help();
+    break;
+  case 'o':
+  case 'O':
+    wcin >> temp;
+    OpenFile(temp);
+    ShowPage();
+    break;
+  case 'c':
+  case 'C':
+    wcin >> temp;
+    CreateFile(temp);
+    ShowPage();
+    break;
+  case 'w':
+  case 'W':
+    wcin >> temp;
+    SaveFile(temp);
+    ShowPage();
+    break;
+  case 's':
+  case 'S':
+    wcin >> temp;
+    SearchWord(temp);
+    break;
+  case 'i':
+  case 'I':
+    wcin >> temp;
+    wcin >> temp2;
+    page.insert(std::stoi(temp), temp2);
+    ShowPage({std::stoi(temp)});
+    break;
+  case 'r':
+  case 'R':
+    wcin >> temp;
+    wcin >> temp2;
+    page.replace(std::stoi(temp), temp2);
+    ShowPage({std::stoi(temp)});
+    break;
+  case 'd':
+  case 'D':
+    if (mode == PLAIN_MODE) {
+      wcin >> temp;
+      page.remove(temp);
+    } else {
+      wcin >> temp;
+      page.remove(std::stoi(temp));
+    }
+    ShowPage();
+    break;
+  case 'm':
+  case 'M':
+    if (mode == PLAIN_MODE) {
+      mode = NUMBER_MODE;
+    } else {
+      mode = PLAIN_MODE;
+    }
+    ShowPage();
+    break;
+  case 'q':
+  case 'Q':
+    return;
+  default:
+    std::wcout << L"Unknown command: " << userInput << std::endl;
+    SwitchInterface(GetUserInput());
+  }
 }
 } // namespace interface

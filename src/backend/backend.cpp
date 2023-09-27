@@ -1,28 +1,65 @@
 #include "../../inc/backend/backend.h"
-#include "../../inc/datastructure/customlist.h"
-#include "../../inc/datastructure/customstring.h"
+#include "../../inc/basic.h"
+#include <cstdlib>
 #include <fstream>
+#include <iostream>
+
+extern Page page;
 
 namespace custom {
-void OpenFile(list<list<string>> &page, const string &path) {
-  std::ifstream file(path);
-  if (!file) {
-    std::cout << "File not found." << std::endl;
-    return;
+void OpenFile(const char *const path) {
+  std::ifstream file;
+  try {
+    file.open(path);
+  } catch (std::ifstream::failure e) {
+    std::cerr << "Exception opening/reading file" << std::endl;
+    exit(-1);
   }
-  string line;
-  // while (std::getline(backend, line)) {
-  //   list<string> line_list;
-  //   for (int i = 0; i < line.length(); i++) {
-  //     line_list.push_back(line[i]);
-  //   }
-  //   page.push_back(line_list);
-  // }
+  if (file) {
+    std::string line;
+    while (std::getline(file, line)) {
+      line += '\n';
+      string s(line);
+      page += s.split();
+    }
+    file.close();
+  }
+}
+void OpenFile(const wchar_t *const path) {
+  std::ifstream file;
+  try {
+    file.open(path);
+  } catch (std::ifstream::failure e) {
+    std::cerr << "Exception opening/reading file" << std::endl;
+    exit(-1);
+  }
+  if (file) {
+    std::string line;
+    while (std::getline(file, line)) {
+      line += '\n';
+      string s(line);
+      page += s.split();
+    }
+    file.close();
+  }
+}
+
+void CreateFile(const wchar_t *const path) {
+  std::wofstream file(path);
   file.close();
 }
-void CreateFile(const string &path) {
-  std::ofstream file(path);
-  file.close();
+void SaveFile(const wchar_t *const path) {
+  std::wofstream file;
+  try {
+    file.open(path);
+  } catch (std::wifstream::failure e) {
+    std::cerr << "Exception opening/reading file" << std::endl;
+    exit(-1);
+  }
+  if (file) {
+    file << page;
+    file.close();
+  }
+  std::cout << "File saved to: " << path << std::endl;
 }
-void OverwriteFile(const list<list<string>> &page, const string &path) {}
 } // namespace custom
