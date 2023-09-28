@@ -44,10 +44,6 @@ void OpenFile(const wchar_t *const path) {
   }
 }
 
-void CreateFile(const wchar_t *const path) {
-  std::wofstream file(path);
-  file.close();
-}
 void SaveFile(const wchar_t *const path) {
   std::wofstream file;
   try {

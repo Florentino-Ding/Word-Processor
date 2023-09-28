@@ -51,8 +51,6 @@ public:
   list<string> split(const wchar_t delimiters = L' ') const;
 };
 
-double string_similarity(const string &, const string &);
-
 } // namespace custom
 
 #endif // STRING_OPERATION_CUSTOMSTRING_H

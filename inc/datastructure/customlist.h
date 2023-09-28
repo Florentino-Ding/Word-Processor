@@ -56,6 +56,26 @@ public:
     _size = 0;
   }
   list<T> &operator=(const list<T> &l) {
+    /**
+     * Assigns the contents of the given list to this list.
+     *
+     * This operator overloads the assignment operator (=) to assign the
+     * contents of the given list (l) to this list. If the given list is the
+     * same as this list, no action is taken and the current list is returned.
+     * Otherwise, the current list is cleared and then each element from the
+     * given list is added to this list using push_back. The elements are added
+     * in the same order as they appear in the given list. The assigned list is
+     * returned.
+     *
+     * @param l The list to assign from.
+     * @return A reference to this list after assignment.
+     *
+     * Example:
+     * list<int> list1 = {1, 2, 3};
+     * list<int> list2;
+     * list2 = list1;
+     * // list2 now contains {1, 2, 3}
+     */
     if (this == &l) {
       return *this;
     }
@@ -68,6 +88,24 @@ public:
     return *this;
   }
   T &operator[](int index) {
+    /**
+     * Accesses the element at the specified index.
+     *
+     * This function allows accessing the element at the specified index in the
+     * list using the subscript operator ([]). If the index is out of range
+     * (less than 0 or greater than or equal to the size of the list), an
+     * std::out_of_range exception is thrown. Otherwise, the function traverses
+     * the list to find the node at the specified index and returns its data.
+     *
+     * @param index The index of the element to access.
+     * @return The data of the element at the specified index.
+     * @throws std::out_of_range if the index is out of range.
+     *
+     * Example:
+     * list<int> myList = {1, 2, 3, 4, 5};
+     * int element = myList[2];
+     * // element is now 3
+     */
     if (index < 0 or index >= size()) {
       throw std::out_of_range("Index out of range");
     }
@@ -78,6 +116,25 @@ public:
     return p->data;
   }
   T operator[](int index) const {
+    /**
+     * Accesses the element at the specified index.
+     *
+     * This function allows accessing the element at the specified
+     * index in the list using the subscript operator ([]). If the
+     * index is out of range (less than 0 or greater than or equal to
+     * the size of the list), an std::out_of_range exception is
+     * thrown. Otherwise, the function traverses the list to find the
+     * node at the specified index and returns its data.
+     *
+     * @param index The index of the element to access.
+     * @return The data of the element at the specified index.
+     * @throws std::out_of_range if the index is out of range.
+     *
+     * Example:
+     * list<int> myList = {1, 2, 3, 4, 5};
+     * int element = myList[2];
+     * // element is now 3
+     */
     if (index < 0 or index >= size()) {
       throw std::out_of_range("Index out of range");
     }
@@ -88,11 +145,41 @@ public:
     return p->data;
   }
   friend list<T> operator+(const list<T> &l1, const list<T> &l2) {
+    /**
+     * Concatenates two lists and returns a new list.
+     *
+     * This friend function overloads the addition operator (+) to concatenate
+     * two lists (l1 and l2) and return a new list. It creates a temporary list
+     * (temp) initialized with the contents of l1. Then, it uses the compound
+     * assignment operator (+=) to append the elements of l2 to temp. Finally,
+     * it returns the resulting concatenated list (temp).
+     *
+     * @param l1 The first list to concatenate.
+     * @param l2 The second list to concatenate.
+     * @return A new list that is the concatenation of l1 and l2.
+     *
+     * Example:
+     * list<int> list1 = {1, 2, 3};
+     * list<int> list2 = {4, 5, 6};
+     * list<int> result = list1 + list2;
+     * // result now contains {1, 2, 3, 4, 5, 6}
+     */
+
     list<T> temp(l1);
     temp += l2;
     return temp;
   }
   void operator+=(const list<T> &l) {
+    /**
+     * Traverses a linked list and performs an action on each node.
+     *
+     * This code snippet traverses a linked list starting from the head node
+     * (l._head) and performs an action on each node. Inside the loop, it calls
+     * the push_back function to add the data of the current node (p->data) to
+     * the list. Then, it moves to the next node by updating the pointer (p) to
+     * point to the next node (p->next).
+     *
+     */
     _Node *p = l._head;
     while (p != nullptr) {
       push_back(p->data);
@@ -100,6 +187,26 @@ public:
     }
   }
   bool operator==(const list<T> &l) const {
+    /**
+     * Checks if the current list is equal to the given list.
+     *
+     * This member function overloads the equality operator (==) to compare the
+     * current list with the given list (l). It first checks if the sizes of the
+     * two lists are different. If so, it returns false. Then, it traverses both
+     * lists simultaneously, comparing the data of each node. If any data pair
+     * is not equal, it returns false. If all data pairs are equal and the
+     * traversal reaches the end of both lists, it returns true.
+     *
+     * @param l The list to compare with.
+     * @return True if the lists are equal, false otherwise.
+     *
+     * Example:
+     * list<int> list1 = {1, 2, 3};
+     * list<int> list2 = {1, 2, 3};
+     * bool result = list1 == list2;
+     * // result is true
+     */
+
     if (size() != l.size()) {
       return false;
     }
@@ -154,6 +261,19 @@ public:
     return _tail->data;
   }
   void push_back(const T &data) {
+    /**
+     * Appends a new node with the given data to the end of the list.
+     *
+     * This code snippet appends a new node with the given data to the end of
+     * the list. It first attempts to allocate memory for the new node using the
+     * `new` operator. If the memory allocation fails, it throws a
+     * `std::system_error` exception with a descriptive error message. If the
+     * list is empty (head is nullptr), the new node becomes both the head and
+     * tail of the list. Otherwise, the new node is linked to the current tail
+     * node, and the tail pointer is updated to the new node. The size of the
+     * list is incremented.
+     *
+     */
     _Node *new_node = nullptr;
     try {
       new_node = new _Node(data);
@@ -171,6 +291,27 @@ public:
     _size++;
   }
   void push_front(const T &data) {
+    /**
+     * Inserts a new node with the given data at the front of the list.
+     *
+     * This function inserts a new node with the given data at the front of the
+     * list. It first attempts to allocate memory for the new node using the
+     * `new` operator. If the memory allocation fails, it throws a
+     * `std::system_error` exception with a descriptive error message. If the
+     * list is empty (head is nullptr), the new node becomes both the head and
+     * tail of the list. Otherwise, the new node is linked to the current head
+     * node, and the head pointer is updated to the new node. The size of the
+     * list is incremented.
+     *
+     * @param data The data to be inserted at the front of the list.
+     * @throws std::system_error if memory allocation fails.
+     *
+     * Example:
+     * list<int> myList = {2, 3, 4};
+     * myList.push_front(1);
+     * // myList now contains {1, 2, 3, 4}
+     */
+
     _Node *new_node = nullptr;
     try {
       new_node = new _Node(data);
@@ -188,6 +329,25 @@ public:
     _size++;
   }
   void pop_back() {
+    /**
+     * Removes the last node from the list.
+     *
+     * This function removes the last node from the list.
+     * If the list is empty, it throws an `std::out_of_range` exception with the
+     * message "List is empty". If there is only one node in the list, it is
+     * deleted and both the head and tail pointers are set to nullptr.
+     * Otherwise, it traverses the list to find the second-to-last node (p->next
+     * == _tail), deletes the last node, updates the tail pointer to the
+     * second-to-last node, and sets its next pointer to nullptr. The size of
+     * the list is decremented.
+     *
+     * @throws std::out_of_range if the list is empty.
+     *
+     * Example:
+     * list<int> myList = {1, 2, 3, 4};
+     * myList.pop_back();
+     * // myList now contains {1, 2, 3}
+     */
     if (empty()) {
       throw std::out_of_range("List is empty");
     }
@@ -207,6 +367,23 @@ public:
     _size--;
   }
   void pop_front() {
+    /**
+     * Removes the first node from the list.
+     *
+     * This function removes the first node from the list.
+     * If the list is empty, it throws an `std::out_of_range` exception with the
+     * message "List is empty". If there is only one node in the list, it is
+     * deleted and both the head and tail pointers are set to nullptr.
+     * Otherwise, it updates the head pointer to point to the second node,
+     * deletes the first node, and updates the size of the list.
+     *
+     * @throws std::out_of_range if the list is empty.
+     *
+     * Example:
+     * list<int> myList = {1, 2, 3, 4};
+     * myList.pop_front();
+     * // myList now contains {2, 3, 4}
+     */
     if (empty()) {
       throw std::out_of_range("List is empty");
     }
@@ -222,6 +399,29 @@ public:
     _size--;
   }
   void insert(int index, const T &data) {
+    /**
+     * Inserts an element at the specified index in the list.
+     *
+     * This function inserts the given element (data) at the specified index in
+     * the list. If the index is less than 0 or greater than the size of the
+     * list, it throws an `std::out_of_range` exception with the message "Index
+     * out of range". If the index is 0, the element is inserted at the front of
+     * the list using `push_front`. If the index is equal to the size of the
+     * list, the element is inserted at the end of the list using `push_back`.
+     * Otherwise, it creates a new node with the given data, inserts it at the
+     * specified index by updating the appropriate pointers, and increments the
+     * size of the list.
+     *
+     * @param index The index at which to insert the element.
+     * @param data The element to be inserted.
+     * @throws std::out_of_range if the index is out of range.
+     * @throws std::system_error if memory allocation fails.
+     *
+     * Example:
+     * list<int> myList = {1, 2, 3};
+     * myList.insert(1, 4);
+     * // myList now contains {1, 4, 2, 3}
+     */
     if (index < 0 or index > size()) {
       throw std::out_of_range("Index out of range");
     }
@@ -267,6 +467,31 @@ public:
   }
   void highlight_show(const list<int> &to_highlight,
                       const char mode = 0) const {
+    /**
+     * Displays the elements of the list with optional highlighting.
+     *
+     * This function displays the elements of the list, with the option to
+     * highlight specific elements based on the provided list (to_highlight).
+     * The highlighting mode can be specified using the 'mode' parameter
+     * (default is 0). In mode 0, the elements are displayed as-is, but the
+     * highlighted elements are displayed with a background color. In mode 1,
+     * the elements are displayed with their corresponding indices, and the
+     * highlighted elements are displayed with both the index and a background
+     * color. The function iterates through the list, checking if each element's
+     * index exists in the to_highlight list. If an element is highlighted, it
+     * is displayed with the appropriate formatting. The elements are separated
+     * by spaces.
+     *
+     * @param to_highlight The list of indices to highlight.
+     * @param mode The highlighting mode (0 or 1).
+     *
+     * Example:
+     * list<int> myList = {1, 2, 3, 4, 5};
+     * list<int> highlightIndices = {1, 3};
+     * myList.highlight_show(highlightIndices, 1);
+     * // Displays: "0 1 2 3 4 5" with elements 1 and 3 highlighted.
+     */
+
     _Node *p = _head;
     int index = 0;
     switch (mode) {
@@ -311,6 +536,28 @@ public:
     }
   }
   void remove(int index) {
+    /**
+     * Removes the element at the specified index from the list.
+     *
+     * This function removes the element at the specified index in the list.
+     * If the index is less than 0 or greater than or equal to the size of the
+     * list, it throws an `std::out_of_range` exception with the message "Index
+     * out of range". If the index is 0, the element is removed from the front
+     * of the list using `pop_front`. If the index is equal to the size of the
+     * list minus 1, the element is removed from the back of the list using
+     * `pop_back`. Otherwise, it traverses the list to find the node before the
+     * node to be removed, updates the pointers to bypass the node to be
+     * removed, deletes the node, and decrements the size of the list.
+     *
+     * @param index The index of the element to remove.
+     * @throws std::out_of_range if the index is out of range.
+     *
+     * Example:
+     * list<int> myList = {1, 2, 3, 4, 5};
+     * myList.remove(2);
+     * // myList now contains {1, 2, 4, 5}
+     */
+
     if (index < 0 or index >= size()) {
       throw std::out_of_range("Index out of range");
     }
@@ -379,6 +626,25 @@ public:
   }
   void replace(int index, const T &data) { this->operator[](index) = data; }
   void reverse() {
+    /**
+     * CustomList class for managing a linked list of elements.
+     *
+     * This class provides functionality for managing a linked list of elements.
+     * It supports operations such as adding elements, removing elements,
+     * accessing elements by index, and counting occurrences of elements. The
+     * class also includes functions for reversing the list and checking if it
+     * is empty.
+     *
+     * Example:
+     * CustomList<int> myList;
+     * myList.push_back(1);
+     * myList.push_back(2);
+     * myList.push_back(3);
+     * myList.reverse();
+     * // myList now contains {3, 2, 1}
+     * int count = myList.count(2);
+     * // count is 1
+     */
     if (empty()) {
       return;
     }
@@ -396,6 +662,24 @@ public:
     _head = p;
   }
   int count(const T &data) const {
+    /**
+     * Counts the occurrences of a specific element in the list.
+     *
+     * This function counts the number of occurrences of the given element
+     * (data) in the list. It initializes a counter (cnt) to 0 and starts
+     * traversing the list from the head node (_head). For each node, it checks
+     * if the data of the node is equal to the given element. If there is a
+     * match, it increments the counter. After traversing the entire list, it
+     * returns the final count.
+     *
+     * @param data The element to count occurrences of.
+     * @return The number of occurrences of the element in the list.
+     *
+     * Example:
+     * CustomList<int> myList = {1, 2, 2, 3, 2, 4};
+     * int count = myList.count(2);
+     * // count is 3
+     */
     int cnt = 0;
     _Node *p = _head;
     while (p != nullptr) {

@@ -148,6 +148,31 @@ int string::find(const wchar_t *const str) const {
   return find_first_of(str, 0);
 }
 int string::find_first_of(const wchar_t *const str, int start) const {
+  /**
+   * Finds the index of the first occurrence of any character from the given
+   * string.
+   *
+   * This member function searches for the first occurrence of any character
+   * from the given string (str) within the current string. It starts searching
+   * from the specified start index (start). If the given string is null, it
+   * returns -1. If the start index is out of range (less than 0 or greater than
+   * or equal to the length of the string), it throws an `std::out_of_range`
+   * exception. It iterates through the characters of the string, comparing each
+   * character with the characters in the given string. If a match is found, it
+   * returns the index of the matching character in the current string. If no
+   * match is found, it returns -1.
+   *
+   * @param str The string containing characters to search for.
+   * @param start The index to start searching from.
+   * @return The index of the first occurrence of a matching character, or -1 if
+   * no match is found.
+   * @throws std::out_of_range if the start index is out of range.
+   *
+   * Example:
+   * string myString = "Hello, World!";
+   * int index = myString.find_first_of(L"lo");
+   * // index is 3
+   */
   if (str == nullptr) {
     return -1;
   }
@@ -170,6 +195,29 @@ string string::substr(int start) const {
   return string(_data + start, _length - start);
 }
 string string::substr(int start, int length) const {
+  /**
+   * Extracts a substring from the current string.
+   *
+   * This member function extracts a substring from the current string, starting
+   * at the specified start index (start) and with the specified length. If the
+   * start index is out of range (less than 0 or greater than or equal to the
+   * length of the string), it throws an `std::out_of_range` exception. If the
+   * length is less than or equal to 0, it throws an `std::out_of_range`
+   * exception. If the specified length is greater than the available characters
+   * from the start index to the end of the string, the length is adjusted to
+   * the maximum possible length. It returns a new string object that represents
+   * the extracted substring.
+   *
+   * @param start The starting index of the substring.
+   * @param length The length of the substring.
+   * @return A new string object representing the extracted substring.
+   * @throws std::out_of_range if the start index or length is out of range.
+   *
+   * Example:
+   * string myString = "Hello, World!";
+   * string subString = myString.substr(7, 5);
+   * // subString is "World"
+   */
   if (start < 0 or start >= _length) {
     throw std::out_of_range("start index out of range");
   }
@@ -190,6 +238,26 @@ string string::reverse() const {
   return temp;
 }
 list<string> string::split(const wchar_t delimiter) const {
+  /**
+   * Splits the current string into a list of substrings based on a delimiter
+   * character.
+   *
+   * This member function splits the current string into a list of substrings
+   * based on the specified delimiter character. If the length of the string is
+   * 0, an empty list is returned. It iterates through the characters of the
+   * string, searching for the delimiter character. Each substring between
+   * delimiters is added to the result list using the substr function. The
+   * substrings are added in the order they appear in the original string. The
+   * resulting list of substrings is returned.
+   *
+   * @param delimiter The delimiter character to split the string.
+   * @return A list of substrings obtained by splitting the string.
+   *
+   * Example:
+   * string myString = "Hello, World!";
+   * list<string> result = myString.split(',');
+   * // result contains {"Hello", " World!"}
+   */
   list<string> result;
   if (_length == 0) {
     return result;
@@ -205,39 +273,6 @@ list<string> string::split(const wchar_t delimiter) const {
     end = start;
   }
   return result;
-}
-
-double string_similarity(const string &str1, const string &str2) {
-  if (str1.empty() || str2.empty()) {
-    return 0;
-  }
-  int len1 = str1.length();
-  int len2 = str2.length();
-  int **dp = new int *[len1 + 1];
-  for (int i = 0; i <= len1; ++i) {
-    dp[i] = new int[len2 + 1];
-  }
-  for (int i = 0; i <= len1; ++i) {
-    dp[i][0] = 0;
-  }
-  for (int i = 0; i <= len2; ++i) {
-    dp[0][i] = 0;
-  }
-  for (int i = 1; i <= len1; ++i) {
-    for (int j = 1; j <= len2; ++j) {
-      if (str1[i - 1] == str2[j - 1]) {
-        dp[i][j] = dp[i - 1][j - 1] + 1;
-      } else {
-        dp[i][j] = dp[i - 1][j] > dp[i][j - 1] ? dp[i - 1][j] : dp[i][j - 1];
-      }
-    }
-  }
-  double similarity = dp[len1][len2] * 1.0 / (len1 > len2 ? len1 : len2);
-  for (int i = 0; i <= len1; ++i) {
-    delete[] dp[i];
-  }
-  delete[] dp;
-  return similarity;
 }
 
 } // namespace custom
