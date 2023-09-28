@@ -13,7 +13,7 @@ MODE mode = PLAIN_MODE;
 
 int main(int argc, char *argv[]) {
   using custom::list, custom::string;
-  using custom::OpenFile, custom::CreateFile, custom::SaveFile;
+  using custom::OpenFile, custom::SaveFile;
   using interface::Welcome, interface::Help, interface::ShowPage;
   using std::wcout, std::endl;
 

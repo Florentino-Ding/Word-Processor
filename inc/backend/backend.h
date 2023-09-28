@@ -8,7 +8,6 @@
 namespace custom {
 void OpenFile(const char *const);
 void OpenFile(const wchar_t *const);
-void CreateFile(const wchar_t *const);
 void SaveFile(const wchar_t *const);
 } // namespace custom
 

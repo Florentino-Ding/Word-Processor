@@ -72,7 +72,6 @@ void Help() {
   for (int i = 0; i < (terminalHeight - 5) / 2; i++) {
     std::cout << std::endl;
   }
-  SwitchInterface(GetUserInput());
 }
 
 void ShowPage(const custom::list<int> &to_highlight) {
@@ -84,7 +83,6 @@ void ShowPage(const custom::list<int> &to_highlight) {
   } else {
     page.show(mode);
   }
-  SwitchInterface(GetUserInput());
 }
 
 void SearchWord(const wchar_t *const input) {
@@ -126,7 +124,7 @@ char GetUserInput() {
   return userInput;
 }
 void SwitchInterface(const char userInput) {
-  using custom::CreateFile, custom::OpenFile, custom::SaveFile;
+  using custom::OpenFile, custom::SaveFile;
   using std::wcout, std::endl, std::wcin;
 
   wchar_t temp[100];
@@ -146,8 +144,9 @@ void SwitchInterface(const char userInput) {
   case 'c':
   case 'C':
     wcin >> temp;
-    CreateFile(temp);
     ShowPage();
+    wcout << L"The word \"" << temp << L"\" appears " << page.count(temp)
+          << L" times." << endl;
     break;
   case 'w':
   case 'W':
@@ -199,7 +198,7 @@ void SwitchInterface(const char userInput) {
     return;
   default:
     std::wcout << L"Unknown command: " << userInput << std::endl;
-    SwitchInterface(GetUserInput());
   }
+  SwitchInterface(GetUserInput());
 }
 } // namespace interface

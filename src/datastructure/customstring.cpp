@@ -269,8 +269,10 @@ list<string> string::split(const wchar_t delimiter) const {
       ++end;
     }
     result.push_back(substr(start, end - start));
-    start = end + 1;
-    end = start;
+    while (end < _length and _data[end] == delimiter) {
+        ++end;
+    }
+    start = end;
   }
   return result;
 }
