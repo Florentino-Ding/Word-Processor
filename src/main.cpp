@@ -14,7 +14,7 @@ MODE mode = PLAIN_MODE;
 int main(int argc, char *argv[]) {
   using custom::list, custom::string;
   using custom::OpenFile, custom::SaveFile;
-  using interface::Welcome, interface::Help, interface::ShowPage;
+  using interface::Welcome, interface::Help, interface::ShowPage, interface::SwitchInterface, interface::GetUserInput;
   using std::wcout, std::endl;
 
   int o;
@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
         wcout << L"Unknown option: " << (char)optopt << endl;
         exit(-1);
       }
+      SwitchInterface(GetUserInput());
     }
   }
 

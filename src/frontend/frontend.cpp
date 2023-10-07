@@ -91,15 +91,21 @@ void SearchWord(const wchar_t *const input) {
     to_highlight = page.find(input);
     if (to_highlight.empty()) {
       std::wcout << L"Can't find \"" << input << L"\"." << std::endl;
-      SwitchInterface(GetUserInput());
+      return;
     } else {
       std::wcout << "The word \"" << input << "\" appears "
                  << to_highlight.size() << " times." << std::endl;
       ShowPage(to_highlight);
     }
   } else {
-    int idx = std::stoi(input);
-    custom::string word = page[idx];
+    custom::string word;
+    if (std::all_of(input, input + wcslen(input),
+                    [](wchar_t c) { return std::iswdigit(c); })) {
+      int idx = std::stoi(input);
+      word = page[idx];
+    } else {
+      word = input;
+    }
     to_highlight = page.find(word);
     std::wcout << "The word \"" << word << "\" appears " << to_highlight.size()
                << " times." << std::endl;
@@ -198,6 +204,7 @@ void SwitchInterface(const char userInput) {
     return;
   default:
     std::wcout << L"Unknown command: " << userInput << std::endl;
+    break;
   }
   SwitchInterface(GetUserInput());
 }
