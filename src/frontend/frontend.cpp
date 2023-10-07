@@ -78,6 +78,10 @@ void ShowPage(const custom::list<int> &to_highlight) {
   using std::wcout;
 
   system("clear");
+  if (page.empty()) {
+    wcout << L"Page is empty." << std::endl;
+    return;
+  }
   if (not to_highlight.empty()) {
     page.highlight_show(to_highlight, mode);
   } else {
@@ -129,12 +133,14 @@ char GetUserInput() {
   }
   return userInput;
 }
+
 void SwitchInterface(const char userInput) {
   using custom::OpenFile, custom::SaveFile;
   using std::wcout, std::endl, std::wcin;
 
   wchar_t temp[100];
   wchar_t temp2[100];
+  Page rpage = page;
   switch (userInput) {
   case 'h':
   case 'H':
@@ -150,9 +156,11 @@ void SwitchInterface(const char userInput) {
   case 'c':
   case 'C':
     wcin >> temp;
-    ShowPage();
     wcout << L"The word \"" << temp << L"\" appears " << page.count(temp)
           << L" times." << endl;
+    wcin.get();
+    wcin.get();
+    ShowPage();
     break;
   case 'w':
   case 'W':
@@ -199,9 +207,57 @@ void SwitchInterface(const char userInput) {
     }
     ShowPage();
     break;
+  case 'j':
+  case 'J':
+      rpage.reverse();
+    if (rpage == page)
+      wcout << L"Page is a palindrome." << endl;
+    else
+      wcout << L"Page is not a palindrome." << endl;
+    wcin.get();
+    ShowPage();
+    break;
+  case 'p':
+  case 'P':
+    wcin >> temp;
+    if (temp[1] != L'\0') {
+      throw std::invalid_argument("Invalid argument");
+    }
+    page = custom::string(page).split(temp[0]);
+    page.set_segment(temp);
+    ShowPage();
+    break;
+  case 't':
+  case 'T':
+    page.reverse();
+    ShowPage();
+    break;
+  case 'e':
+  case 'E':
+    if (mode == PLAIN_MODE) {
+      wcin >> temp;
+      wcin >> temp2;
+      custom::list<int> idx = page.find(temp);
+      if (idx.empty()) {
+        std::wcout << L"Can't find \"" << temp << L"\"." << std::endl;
+        wcin.get();
+        ShowPage();
+        break;
+      }
+      int t = std::stoi(temp2);
+      page.remove(idx.front(), t);
+    } else {
+      wcin >> temp;
+      wcin >> temp2;
+      int idx = std::stoi(temp);
+      int t = std::stoi(temp2);
+      page.remove(idx, t);
+    }
+    ShowPage();
+    break;
   case 'q':
   case 'Q':
-    return;
+    exit(0);
   default:
     std::wcout << L"Unknown command: " << userInput << std::endl;
     break;

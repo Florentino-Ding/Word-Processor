@@ -10,7 +10,7 @@
 #include <ostream>
 
 namespace custom {
-string::string() : _data(nullptr), _length(0), _capacity(DEFAULT_CAPACITY) {}
+string::string() : _data(new wchar_t [DEFAULT_CAPACITY]), _length(0), _capacity(DEFAULT_CAPACITY) {}
 string::string(const char *const str) {
   if (str == nullptr) {
     _data = nullptr;
@@ -84,8 +84,8 @@ string &string::operator+=(const string &str) {
   if (str._length == 0) {
     return *this;
   }
-  if (_length + str._length > _capacity) {
-    wchar_t *temp = new wchar_t[_length + str._length];
+  if (_length + str._length + 1 > _capacity) {
+    wchar_t *temp = new wchar_t[_length + str._length + 1];
     wcscpy(temp, _data);
     wcscat(temp, str._data);
     delete[] _data;

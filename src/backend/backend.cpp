@@ -21,6 +21,7 @@ void OpenFile(const char *const path) {
       line += '\n';
       string s(line);
       page += s.split();
+      page.set_segment(L" ");
     }
     file.close();
   }
@@ -39,6 +40,7 @@ void OpenFile(const wchar_t *const path) {
       line += '\n';
       string s(line);
       page += s.split();
+      page.set_segment(L" ");
     }
     file.close();
   }

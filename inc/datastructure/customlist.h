@@ -16,15 +16,20 @@ private:
     _Node *next;
 
     _Node() : next(nullptr) {}
+
     _Node(const T d) : next(nullptr) { data = d; }
+
     _Node(const T d, _Node *next) : next(next) { data = d; }
   };
+
   _Node *_head;
   _Node *_tail;
-  int _size;
+  T _seg;
+  long _size;
 
 public:
   list() : _head(nullptr), _tail(nullptr), _size(0) {}
+
   list(T *arr, int length) {
     _head = nullptr;
     _tail = nullptr;
@@ -32,6 +37,7 @@ public:
       push_back(arr[i]);
     }
   }
+
   list(const list<T> &l) {
     _head = nullptr;
     _tail = nullptr;
@@ -41,6 +47,7 @@ public:
       p = p->next;
     }
   }
+
   list(const std::initializer_list<T> &l) {
     _head = nullptr;
     _tail = nullptr;
@@ -48,6 +55,7 @@ public:
       push_back(i);
     }
   }
+
   ~list() {
     while (not empty()) {
       pop_front();
@@ -55,6 +63,7 @@ public:
     _tail = nullptr;
     _size = 0;
   }
+
   list<T> &operator=(const list<T> &l) {
     /**
      * Assigns the contents of the given list to this list.
@@ -87,6 +96,7 @@ public:
     }
     return *this;
   }
+
   T &operator[](int index) {
     /**
      * Accesses the element at the specified index.
@@ -115,6 +125,7 @@ public:
     }
     return p->data;
   }
+
   T operator[](int index) const {
     /**
      * Accesses the element at the specified index.
@@ -144,6 +155,7 @@ public:
     }
     return p->data;
   }
+
   friend list<T> operator+(const list<T> &l1, const list<T> &l2) {
     /**
      * Concatenates two lists and returns a new list.
@@ -169,6 +181,7 @@ public:
     temp += l2;
     return temp;
   }
+
   void operator+=(const list<T> &l) {
     /**
      * Traverses a linked list and performs an action on each node.
@@ -186,6 +199,7 @@ public:
       p = p->next;
     }
   }
+
   bool operator==(const list<T> &l) const {
     /**
      * Checks if the current list is equal to the given list.
@@ -221,11 +235,13 @@ public:
     }
     return true;
   }
+
   bool operator!=(const list<T> &l) const { return not(*this == l); }
+
   friend std::wostream &operator<<(std::wostream &os, const list<T> &l) {
     _Node *p = l._head;
     while (p != nullptr) {
-      os << p->data << " ";
+      os << p->data << l._seg;
       p = p->next;
     }
     return os;
@@ -239,8 +255,21 @@ public:
     return is;
   }
 
+  operator T const() const {
+    T result;
+    _Node *p = _head;
+    while (p != nullptr) {
+      result += p->data;
+      result += _seg;
+      p = p->next;
+    }
+    return result;
+  }
+
   int size() const { return _size; }
+
   bool empty() const { return _size == 0; }
+
   void clear() {
     while (not empty()) {
       pop_front();
@@ -248,18 +277,21 @@ public:
     _tail = nullptr;
     _size = 0;
   }
+
   T front() const {
     if (empty()) {
       throw std::out_of_range("List is empty");
     }
     return _head->data;
   }
+
   T back() const {
     if (empty()) {
       throw std::out_of_range("List is empty");
     }
     return _tail->data;
   }
+
   void push_back(const T &data) {
     /**
      * Appends a new node with the given data to the end of the list.
@@ -290,6 +322,7 @@ public:
     }
     _size++;
   }
+
   void push_front(const T &data) {
     /**
      * Inserts a new node with the given data at the front of the list.
@@ -328,6 +361,7 @@ public:
     }
     _size++;
   }
+
   void pop_back() {
     /**
      * Removes the last node from the list.
@@ -366,6 +400,7 @@ public:
     }
     _size--;
   }
+
   void pop_front() {
     /**
      * Removes the first node from the list.
@@ -398,6 +433,7 @@ public:
     }
     _size--;
   }
+
   void insert(int index, const T &data) {
     /**
      * Inserts an element at the specified index in the list.
@@ -446,6 +482,7 @@ public:
       _size++;
     }
   }
+
   void insert(int index, const list<T> &l) {
     if (index < 0 or index > size()) {
       throw std::out_of_range("Index out of range");
@@ -465,6 +502,9 @@ public:
       _size += l._size;
     }
   }
+
+  void set_segment(const T &seg) { _seg = seg; }
+
   void highlight_show(const list<int> &to_highlight,
                       const char mode = 0) const {
     /**
@@ -520,6 +560,7 @@ public:
       }
     }
   }
+
   void show(const char mode = 0) const {
     _Node *p = _head;
     switch (mode) {
@@ -535,6 +576,7 @@ public:
       }
     }
   }
+
   void remove(int index) {
     /**
      * Removes the element at the specified index from the list.
@@ -576,6 +618,7 @@ public:
       _size--;
     }
   }
+
   void remove(const T &data) {
     bool idx = exist(data);
     if (not idx) {
@@ -588,17 +631,17 @@ public:
       }
     }
   }
+
   void remove(int index, int length) {
     if (index < 0 or index >= size()) {
       throw std::out_of_range("Index out of range");
     }
-    if (index + length > size()) {
-      throw std::out_of_range("Index out of range");
-    }
-    for (int i = 0; i < length; i++) {
+    while (_size > index and 0 < length) {
       remove(index);
+      length--;
     }
   }
+
   bool exist(const T data) const {
     _Node *p = _head;
     int index = 0;
@@ -611,6 +654,7 @@ public:
     }
     return false;
   }
+
   list<int> find(const T &data) const {
     _Node *p = _head;
     list<int> result;
@@ -624,7 +668,9 @@ public:
     }
     return result;
   }
+
   void replace(int index, const T &data) { this->operator[](index) = data; }
+
   void reverse() {
     /**
      * CustomList class for managing a linked list of elements.
@@ -661,6 +707,7 @@ public:
     _tail = _head;
     _head = p;
   }
+
   int count(const T &data) const {
     /**
      * Counts the occurrences of a specific element in the list.
